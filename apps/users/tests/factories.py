@@ -10,4 +10,8 @@ class UserFactory(factory.django.DjangoModelFactory):
         model = User 
 
     email = factory.declarations.Sequence(lambda n: f'user{n}@example.com')
-    password = factory.declarations.PostGenerationMethodCall('set_password', DEFAULT_PASSWORD)
+    # password = factory.declarations.PostGenerationMethodCall('set_password', DEFAULT_PASSWORD)
+    @classmethod
+    def _create(cls, model_class, *args, **kwargs):
+        kwargs.setdefault('password', DEFAULT_PASSWORD)
+        return model_class.objects.create_user(*args, **kwargs)

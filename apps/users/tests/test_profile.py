@@ -17,7 +17,7 @@ class TestProfile:
         response = self.client.get(self.url)
         assert response.status_code == status.HTTP_401_UNAUTHORIZED
 
-    def test_authenticated_user_cannot_get_profile(self):
+    def test_authenticated_user_can_get_profile(self):
         self.client.force_authenticate(user=self.user)
         response = self.client.get(self.url)
         assert response.status_code == status.HTTP_200_OK
