@@ -7,6 +7,15 @@ class CategorySerializer(serializers.ModelSerializer):
         fields = ('id', 'name', 'slug', 'description')
         read_only_fields = ('slug', )
 
+    def validate_name(self, value):
+        '''Prevent duplicated category names'''
+        queryset = Category.objects.filter(name__iexact=value)
+        if self.instance: # instance only exists on Update methods
+            queryset = queryset.exclude(pk=self.instance.pk) # don't count it
+        if queryset.exists():
+            raise serializers.ValidationError('A category with this name already exists.')
+        return value 
+
 class ProductSerializer(serializers.ModelSerializer):
     # return the full category object's data on GET requests
     category = CategorySerializer(read_only=True)

@@ -16,18 +16,23 @@ class Category(models.Model):
         ordering = ['name']
 
     def save(self, *args, **kwargs):
-        '''Slugify the title'''
+        '''Slugify the name into a unique slug (may add numbers at the end)'''
         if not self.slug:
-            self.slug = slugify(self.name)
+            base = slugify(self.name)
+            slug = base
+            counter = 2
+            while Category.objects.filter(slug=slug).exists():
+                slug = f'{base}-{counter}'
+                counter += 1
+            self.slug = slug
         super().save(*args, **kwargs)
 
     def __str__(self):
         return self.name
 
-
 class Product(models.Model):
-    name = models.CharField(max_length=255, unique=True)
-    slug = models.CharField(max_length=275)
+    name = models.CharField(max_length=255)
+    slug = models.CharField(max_length=275, unique=True)
     category = models.ForeignKey(
         Category,
         on_delete=models.PROTECT, # keep the Product
@@ -54,14 +59,14 @@ class Product(models.Model):
         ordering = ['-created_at'] # newests first
 
     def save(self, *args, **kwargs):
-        '''Slugify the title into a unique slug (may add numbers at the end)'''
+        '''Slugify the name into a unique slug (may add numbers at the end)'''
         if not self.slug:
             base = slugify(self.name)
             slug = base
             counter = 2
             while Product.objects.filter(slug=slug).exists():
                 slug = f'{base}-{counter}'
-                counter += 2
+                counter += 1
             self.slug = slug
         super().save(*args, **kwargs)
 
