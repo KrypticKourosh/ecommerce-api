@@ -16,6 +16,9 @@ urlpatterns = [
     # Products
     path('api/', include('apps.products.urls')),
 
+    # Cart
+    path('api/cart', include('apps.cart.urls')),
+
     # API docs
     path('api/schema', SpectacularAPIView.as_view(), name='schema'),
     path('api/docs', SpectacularSwaggerView.as_view(url_name='schema'), name='swagger-ui'),
